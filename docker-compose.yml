@@ -1,0 +1,17 @@
+version: '2'
+services:
+    postgres:
+        image: postgres:9.6.5
+    wellcoders:
+        image: python:3.6
+        volumes:
+            - .:/app
+            - ../logs:/logs
+        command: sh run.sh
+        working_dir: /app
+        ports:
+            - "8000:8000"
+        depends_on:
+          - postgres
+        environment:
+            - DJANGO_SETTINGS_MODULE=wellcoders_backend.settings_prod
