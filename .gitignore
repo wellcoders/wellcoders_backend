@@ -1,3 +1,4 @@
 wellcoders_backend/settings_prod.py
 static/*
 .idea/*
+__pycache__/

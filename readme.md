@@ -8,7 +8,7 @@ contraseñas.
 El archivo de docker apunta a `wellcoders_backend/settings_prod.py`.
 
 ## Ejecutar el servidor de desarrollo con Docker
-En la raíz del proyecto: `docker-compose -f docker-compose-develop.yml up`.
+En la raíz del proyecto: `docker-compose -f docker-compose-develop.yml up -d`.
 
 ## Crear un usuario en django:
 En la raíz del proyecto: `docker-compose run wellcoders python manage.py createsuperuser`.
