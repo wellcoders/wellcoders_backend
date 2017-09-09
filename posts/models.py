@@ -7,6 +7,9 @@ class Category(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     styles = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
     DRAFT = 'DRF'
