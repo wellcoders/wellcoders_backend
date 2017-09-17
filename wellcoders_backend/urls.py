@@ -18,4 +18,16 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+from rest_framework import routers
+from rest_framework_jwt.views import obtain_jwt_token
+
+from users.api import Register
+
+router = routers.DefaultRouter()
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^api/1.0/', include(router.urls)),
+    url(r'^api/1.0/login/', obtain_jwt_token),
+    url(r'^api/1.0/register/', Register.as_view(), name='register')
 ]
