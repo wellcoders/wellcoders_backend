@@ -28,6 +28,5 @@ urlpatterns = [
     url(r'^api/1.0/', include(router.urls)),
     url(r'^api/1.0/login/', obtain_jwt_token),
     url(r'^api/1.0/register/', Register.as_view(), name='register'),
-    url(r'^api/1.0/posts/$', PostList.as_view(), name='post-list'),
     url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/posts/$', UserPostList.as_view(), name='userpost-list')
 ]

@@ -9,10 +9,3 @@ class PostListSerializer(ModelSerializer):
         model = Post
         fields = ['owner', 'title', 'subtitle', 'content', 'summary', 'media', 'status', 'category']
 
-
-class PostSerializer(ModelSerializer):
-
-    class Meta:
-        model = Post
-        fields = '__all__'
-        read_only_fields = ('owner',)
