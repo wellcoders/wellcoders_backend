@@ -22,7 +22,7 @@ from users.api import Register
 from posts.api import PostsAPI
 
 router = routers.DefaultRouter()
-router.register("api/1.0/posts", PostsAPI, base_name="posts_api")
+router.register("posts", PostsAPI, base_name="posts_api")
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
