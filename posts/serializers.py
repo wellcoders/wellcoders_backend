@@ -6,6 +6,8 @@ from users.serializers import UserSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django.conf import settings
+from rest_framework.serializers import ModelSerializer
+from posts.models import Post
 
 class CategorySerializer(ModelSerializer):
 
@@ -38,3 +40,15 @@ class Pagination(PageNumberPagination):
         })
 
 
+class PostListSerializer(ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = '__all__'
+
+
+class PostSerializer(ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = '__all__'
