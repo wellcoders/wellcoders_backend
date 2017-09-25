@@ -9,7 +9,6 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'password']
 
-
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
 
@@ -17,6 +16,7 @@ class UserSerializer(ModelSerializer):
         user.save()
 
         return user
+
 
 def login_handler(token, user=None, request=None):
     serialized_user = UserSerializer(user, context={'request': request}).data

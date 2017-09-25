@@ -7,5 +7,11 @@ class PostListSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['owner', 'title', 'subtitle', 'content', 'summary', 'media', 'status', 'category']
+        fields = '__all__'
 
+
+class PostSerializer(ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = '__all__'

@@ -9,4 +9,4 @@ from posts.serializers import PostListSerializer
 
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
-    #permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
