@@ -17,10 +17,12 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
+from posts.api import PostsAPI
 from posts.views import PostList
 from users.api import Register, UserPostList
 
 router = routers.DefaultRouter()
+router.register("posts", PostsAPI, base_name="posts_api")
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
