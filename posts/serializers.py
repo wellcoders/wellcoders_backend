@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 from rest_framework.serializers import ModelSerializer
 from posts.models import Post
+from users.serializers import UserDetailSerializer
 
 
 class PostListSerializer(ModelSerializer):
+
+    owner = UserDetailSerializer()
 
     class Meta:
         model = Post
@@ -11,6 +14,8 @@ class PostListSerializer(ModelSerializer):
 
 
 class PostSerializer(ModelSerializer):
+
+    owner = UserDetailSerializer()
 
     class Meta:
         model = Post
