@@ -2,6 +2,8 @@ version: '2'
 services:
     postgres:
         image: postgres:9.6.5
+        ports:
+            - "5432:5432"
     wellcoders:
         image: registry.gitlab.com/wellcoders/wellcoders_backend
         volumes:
