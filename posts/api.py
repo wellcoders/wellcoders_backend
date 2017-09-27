@@ -26,3 +26,5 @@ class UserPostList(generics.ListAPIView):
     def get_queryset(self):
         queryset = super(UserPostList, self).get_queryset()
         return queryset.filter(owner__username=self.kwargs.get('username'))
+
+# Category Post List
