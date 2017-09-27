@@ -19,8 +19,7 @@ class PostsAPI(ModelViewSet):
 
 class UserPostList(generics.ListAPIView):
 
-    model = Post
-    queryset = Post.objects.all()
+    queryset = Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED).all().order_by('-publish_date')
     serializer_class = PostSerializer
     pagination_class = Pagination
 
