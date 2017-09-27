@@ -18,14 +18,6 @@ class UserSerializer(ModelSerializer):
         return user
 
 
-class UserDetailSerializer(ModelSerializer):
-
-    class Meta:
-
-        model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
-
-
 def login_handler(token, user=None, request=None):
     serialized_user = UserSerializer(user, context={'request': request}).data
     serialized_user.pop('password')
