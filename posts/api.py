@@ -2,8 +2,8 @@
 from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.mixins import ListModelMixin
-from posts.models import Post
-from posts.serializers import PostSerializer, Pagination
+from posts.models import Post, Category
+from posts.serializers import PostSerializer, Pagination, CategorySerializer
 from django.utils import timezone
 from rest_framework.filters import SearchFilter, OrderingFilter, DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
@@ -26,4 +26,9 @@ class UserPostList(generics.ListAPIView):
     def get_queryset(self):
         queryset = super(UserPostList, self).get_queryset()
         return queryset.filter(owner__username=self.kwargs.get('username'))
+
+
+class CategoryList(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 
