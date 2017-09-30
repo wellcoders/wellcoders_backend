@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from rest_framework import generics
+from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.mixins import ListModelMixin
-from posts.models import Post
+from posts.models import Post, Category
 from posts.serializers import PostSerializer, Pagination
 from django.utils import timezone
 from rest_framework.filters import SearchFilter, OrderingFilter, DjangoFilterBackend
@@ -17,7 +17,7 @@ class PostsAPI(ModelViewSet):
     pagination_class = Pagination
 
 
-class UserPostList(generics.ListAPIView):
+class UserPostList(ListAPIView):
 
     model = Post
     queryset = Post.objects.all()
@@ -28,4 +28,13 @@ class UserPostList(generics.ListAPIView):
         queryset = super(UserPostList, self).get_queryset()
         return queryset.filter(owner__username=self.kwargs.get('username'))
 
-# Category Post List
+class CategoryPostList(ListAPIView):
+    model = Post
+    serializer_class = PostSerializer
+    pagination_class = Pagination
+
+    def get_queryset(self):
+        category_name = self.kwargs.get('category', '')
+        category = Category.objects.get(name=category_name)
+
+        return  Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED, category=category.pk).all().order_by('-publish_date')

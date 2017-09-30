@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
-from posts.api import PostsAPI, UserPostList
+from posts.api import PostsAPI, UserPostList, CategoryPostList
 from users.api import Register
 
 router = routers.DefaultRouter()
@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'^api/1.0/', include(router.urls)),
     url(r'^api/1.0/login/', obtain_jwt_token),
     url(r'^api/1.0/register/', Register.as_view(), name='register'),
-    url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/posts/$', UserPostList.as_view(), name='userpost-list')
+    url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/posts/$', UserPostList.as_view(), name='userpost-list'),
+    url(r'^api/1.0/tag/(?P<category>[0-9a-zA-Z_-]+)/$', CategoryPostList.as_view(), name='categorypost-list')
 ]
