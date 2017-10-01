@@ -81,7 +81,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'HOST': 'postgres',
+#        'HOST': 'postgres',
+        'HOST': 'localhost',
         'PORT': 5432
     }
 }
@@ -143,5 +144,6 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.serializers.login_handler'
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.serializers.login_handler',
+    'JWT_AUTH_HEADER_PREFIX': 'wcapp'
 }
