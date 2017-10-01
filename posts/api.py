@@ -16,6 +16,16 @@ class PostsAPI(ModelViewSet):
     queryset = Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED).all().order_by('-publish_date')
     pagination_class = Pagination
 
+    def perform_create(self, serializer):
+        request = self.request
+        category = None
+        try:
+            category = Category.objects.get(pk=request.data.get('category_id'))
+        except:
+            pass
+
+        serializer.save(owner=request.user, category=category)
+        
 
 class UserPostList(generics.ListAPIView):
 

@@ -24,6 +24,16 @@ class PostSerializer(ModelSerializer):
         model = Post
         fields = ['pk', 'media', 'owner', 'publish_date','title', 'summary', 'content', 'category']
 
+    def get_fields(self):
+        fields = super(PostSerializer, self).get_fields()
+
+        if 'view' in self.context:
+            if self.context['view'].action in ('create', 'update'):
+                fields.pop('owner')
+                fields.pop('category')
+
+        return fields
+
 
 class Pagination(PageNumberPagination):
 
