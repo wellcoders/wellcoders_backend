@@ -8,8 +8,7 @@ from django.utils import timezone
 from rest_framework.filters import SearchFilter, OrderingFilter, DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-
-from posts.models import Post
+from django.contrib.auth.models import User
 
 class PostsAPI(ModelViewSet):
     serializer_class = PostSerializer
@@ -19,14 +18,14 @@ class PostsAPI(ModelViewSet):
 
 class UserPostList(ListAPIView):
 
-    model = Post
-    queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = Pagination
 
     def get_queryset(self):
-        queryset = super(UserPostList, self).get_queryset()
-        return queryset.filter(owner__username=self.kwargs.get('username'))
+        username = self.kwargs.get('username', '')
+        user = User.objects.get(username=username)
+        return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED,
+                                                    owner=user.pk).all().order_by('-publish_date')
 
 class CategoryPostList(ListAPIView):
     model = Post
@@ -36,5 +35,4 @@ class CategoryPostList(ListAPIView):
     def get_queryset(self):
         category_name = self.kwargs.get('category', '')
         category = Category.objects.get(name=category_name)
-
         return  Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED, category=category.pk).all().order_by('-publish_date')
