@@ -22,7 +22,7 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['pk', 'media', 'owner', 'publish_date','title', 'summary', 'content', 'category']
+        fields = ['pk', 'media', 'owner', 'publish_date','title', 'summary', 'content', 'category', 'status']
 
     def get_fields(self):
         fields = super(PostSerializer, self).get_fields()
@@ -31,6 +31,8 @@ class PostSerializer(ModelSerializer):
             if self.context['view'].action in ('create', 'update'):
                 fields.pop('owner')
                 fields.pop('category')
+            elif self.context['view'].action in ('list'):
+                fields.pop('status')
 
         return fields
 
@@ -49,6 +51,3 @@ class Pagination(PageNumberPagination):
             'count': self.page.paginator.count,
             'results': data
         })
-
-
-
