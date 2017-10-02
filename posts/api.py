@@ -8,7 +8,7 @@ from django.utils import timezone
 from rest_framework.filters import SearchFilter, OrderingFilter, DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-
+from lxml.html.clean import clean_html
 from posts.models import Post
 
 class PostsAPI(ModelViewSet):
@@ -24,7 +24,9 @@ class PostsAPI(ModelViewSet):
         except:
             pass
 
-        serializer.save(owner=request.user, category=category)
+        serializer.save(owner=request.user, 
+                        category=category, 
+                        content=clean_html(request.data.get('content')))
         
 
 class UserPostList(generics.ListAPIView):
