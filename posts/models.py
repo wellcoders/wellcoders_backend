@@ -14,17 +14,18 @@ class Category(models.Model):
 class Post(models.Model):
     DRAFT = 'DRF'
     PUBLISHED = 'PUB'
+    DELETED = 'DEL'
 
     STATUS = (
         (DRAFT, 'Draft'),
-        (PUBLISHED, 'Published')
+        (PUBLISHED, 'Published'),
+        (DELETED, 'Deleted')
     )
 
     owner = models.ForeignKey(User)
     created_at = models.DateTimeField(auto_now=True)
     publish_date = models.DateTimeField()
     title = models.CharField(max_length=155)
-    subtitle = models.CharField(max_length=155)
     content = models.TextField()
     summary = models.CharField(max_length=155)
     category = models.ForeignKey(Category)

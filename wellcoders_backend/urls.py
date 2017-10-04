@@ -17,14 +17,19 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
-
-from users.api import Register
+from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList
+from users.api import Register, UserAPI
 
 router = routers.DefaultRouter()
+router.register("posts", PostsAPI, base_name="posts_api")
+router.register("users", UserAPI, base_name="user_api")
 
 urlpatterns = [
     url(r'^api/kc/', admin.site.urls),
     url(r'^api/1.0/', include(router.urls)),
     url(r'^api/1.0/login/', obtain_jwt_token),
-    url(r'^api/1.0/register/', Register.as_view(), name='register')
+    url(r'^api/1.0/register/', Register.as_view(), name='register'),
+    url(r'^api/1.0/categories/', CategoryList.as_view(), name='category'),
+    url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/$', UserPostList.as_view(), name='userpost-list'),
+    url(r'^api/1.0/tag/(?P<category>[0-9a-zA-Z_-]+)/$', CategoryPostList.as_view(), name='categorypost-list')
 ]
