@@ -23,7 +23,7 @@ from users.api import Register
 router = routers.DefaultRouter()
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^api/kc/', admin.site.urls),
     url(r'^api/1.0/', include(router.urls)),
     url(r'^api/1.0/login/', obtain_jwt_token),
     url(r'^api/1.0/register/', Register.as_view(), name='register')
