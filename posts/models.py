@@ -14,10 +14,12 @@ class Category(models.Model):
 class Post(models.Model):
     DRAFT = 'DRF'
     PUBLISHED = 'PUB'
+    DELETED = 'DEL'
 
     STATUS = (
         (DRAFT, 'Draft'),
-        (PUBLISHED, 'Published')
+        (PUBLISHED, 'Published'),
+        (DELETED, 'Deleted')
     )
 
     owner = models.ForeignKey(User)
