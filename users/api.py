@@ -31,6 +31,9 @@ class Register(APIView):
     permission_classes = (AllowAny,)
     
     def post(self, request, format=None):
+        if(request.data.get('email') and User.objects.filter(email=request.data['email']).exists()):
+            return Response({'email_error': 'This email has been registered for other user.'}, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
