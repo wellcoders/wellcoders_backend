@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.http import Http404
 from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.mixins import ListModelMixin
@@ -12,10 +13,29 @@ from django.contrib.auth.models import User
 from lxml.html.clean import clean_html
 from posts.models import Post
 
+
 class PostsAPI(ModelViewSet):
     serializer_class = PostSerializer
-    queryset = Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED).all().order_by('-publish_date')
     pagination_class = Pagination
+
+    def get_queryset(self):
+        if 'username' in self.request.query_params and 'title_slug' in self.request.query_params:
+            user = User.objects.get(username=self.request.query_params.get('username'))
+            if self.request.user.is_superuser or self.request.user == user:
+                queryset = Post.objects.select_related().filter(owner=user, title_slug=self.request.query_params.
+                                                                get('title_slug'))
+            else:
+                queryset = Post.objects.select_related().filter(owner=user, title_slug=self.request.query_params
+                                                                .get('title_slug'), publish_date__lte=timezone.now(),
+                                                                status=Post.PUBLISHED)
+        else:
+            queryset = Post.objects.select_related().filter(publish_date__lte=timezone.now(),
+                                                            status=Post.PUBLISHED).all().order_by('-publish_date')
+
+        if queryset:
+            return queryset
+        else:
+            raise Http404
 
     def perform_create(self, serializer):
         request = self.request
@@ -36,10 +56,14 @@ class UserPostList(ListAPIView):
     pagination_class = Pagination
 
     def get_queryset(self):
-        username = self.kwargs.get('username', '')
-        user = User.objects.get(username=username)
-        return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED,
-                                                    owner=user.pk).all().order_by('-publish_date')
+        try:
+            username = self.kwargs.get('username', '')
+            user = User.objects.get(username=username)
+            return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED,
+                                                        owner=user.pk).all().order_by('-publish_date')
+        except User.DoesNotExist:
+            raise Http404
+
 
 class CategoryPostList(ListAPIView):
     model = Post
@@ -49,7 +73,8 @@ class CategoryPostList(ListAPIView):
     def get_queryset(self):
         category_name = self.kwargs.get('category', '')
         category = Category.objects.get(name=category_name)
-        return  Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED, category=category.pk).all().order_by('-publish_date')
+        return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED, category=category.pk).all().order_by('-publish_date')
+
 
 class CategoryList(ListAPIView):
     queryset = Category.objects.all()
