@@ -29,3 +29,4 @@ class Post(models.Model):
     category = models.ForeignKey(Category)
     media = models.TextField(null=True, blank=True)  # Use with an url until media model is included
     status = models.CharField(max_length=3, choices=STATUS, default=DRAFT)
+
