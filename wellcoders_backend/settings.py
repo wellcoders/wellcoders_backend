@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'museum',
     'posts'
 ]
 
@@ -148,3 +149,16 @@ JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.serializers.login_handler',
     'JWT_VERIFY_EXPIRATION': False
 }
+
+UPLOADS_DIR = os.path.join('./static', 'uploads')
+
+# only lowercase
+TITLE_SLUG_REPLACEMENTS = [
+    ['á', 'a'],
+    ['é', 'e'],
+    ['í', 'i'],
+    ['ó', 'o'],
+    ['ú', 'u'],
+    ['€', 'euros'],
+    ['ñ', 'n']
+]

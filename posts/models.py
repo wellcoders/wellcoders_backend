@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
+import re
 
 
 class Category(models.Model):
@@ -35,3 +37,12 @@ class Post(models.Model):
 
     class Meta:
         unique_together = ('title', 'owner',)
+
+    @staticmethod
+    def generate_title_slug(source):
+        source = source.lower()
+
+        for string, replacement in settings.TITLE_SLUG_REPLACEMENTS:
+            source = source.replace(string, replacement)
+            
+        return "-".join(re.findall("[a-zA-Z0-9]+", source))

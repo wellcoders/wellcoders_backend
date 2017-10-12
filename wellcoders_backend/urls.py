@@ -19,10 +19,12 @@ from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList
 from users.api import Register, UserAPI
+from media.api import MediaUploadViewSet
 
 router = routers.DefaultRouter()
 router.register("posts", PostsAPI, base_name="posts_api")
 router.register("users", UserAPI, base_name="user_api")
+router.register("media", MediaUploadViewSet, base_name="media_api")
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -34,3 +36,6 @@ urlpatterns = [
     url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/$', UserPostList.as_view(), name='userpost-list'),
     url(r'^api/1.0/tag/(?P<category>[0-9a-zA-Z_-]+)/$', CategoryPostList.as_view(), name='categorypost-list')
 ]
+
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+urlpatterns += staticfiles_urlpatterns()
