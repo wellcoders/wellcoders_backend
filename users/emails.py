@@ -1,0 +1,2 @@
+PASSWORD_RECOVERY_SUBJECT = 'Wellcoders: Password Recovery Email'
+PASSWORD_RECOVERY_BODY = 'Wellcome %(user)s. We have received a request to recovery your password. Your new password is %(password)s. Remember to change it after login. Have a nice day!'

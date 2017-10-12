@@ -162,3 +162,7 @@ TITLE_SLUG_REPLACEMENTS = [
     ['€', 'euros'],
     ['ñ', 'n']
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+WELLCODERS_RECOVERY_EMAIL = 'recovery@wellcoders.com'

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from django.conf import settings
 from rest_framework.serializers import ModelSerializer
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+
 
 
 
@@ -43,3 +48,7 @@ def login_handler(token, user=None, request=None):
         'token': token,
         'user': serialized_user
     }
+
+
+# Get the UserModel
+UserModel = get_user_model()

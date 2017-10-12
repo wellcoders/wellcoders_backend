@@ -18,7 +18,7 @@ from django.contrib import admin
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
 from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList
-from users.api import Register, UserAPI
+from users.api import Register, UserAPI, Recovery
 from media.api import MediaUploadViewSet
 
 router = routers.DefaultRouter()
@@ -28,10 +28,10 @@ router.register("media", MediaUploadViewSet, base_name="media_api")
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-
     url(r'^api/1.0/', include(router.urls)),
     url(r'^api/1.0/login/', obtain_jwt_token),
     url(r'^api/1.0/register/', Register.as_view(), name='register'),
+    url(r'^api/1.0/recovery/', Recovery.as_view(), name='recovery'),
     url(r'^api/1.0/categories/', CategoryList.as_view(), name='category'),
     url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/$', UserPostList.as_view(), name='userpost-list'),
     url(r'^api/1.0/tag/(?P<category>[0-9a-zA-Z_-]+)/$', CategoryPostList.as_view(), name='categorypost-list')
