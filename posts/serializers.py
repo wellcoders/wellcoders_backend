@@ -10,11 +10,13 @@ from django.conf import settings
 from rest_framework.serializers import ModelSerializer
 from posts.models import Post
 
+
 class CategorySerializer(ModelSerializer):
 
     class Meta:
         model = Category
         fields = ['pk', 'name']
+
 
 class PostSerializer(ModelSerializer):
     owner = UserSerializer()
@@ -22,7 +24,7 @@ class PostSerializer(ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['pk', 'media', 'owner', 'publish_date','title', 'summary', 'content', 'category', 'status']
+        fields = ['pk', 'media', 'owner', 'publish_date', 'title', 'title_slug', 'summary', 'content', 'category', 'status']
 
     def get_fields(self):
         fields = super().get_fields()
@@ -39,7 +41,6 @@ class PostSerializer(ModelSerializer):
             except:
                 # Pasará por aquí si el serializer no forma parte de un ModelViewSet, pero es necesario hacer pop de owner y category en la creación de posts
                 pass
-
 
         return fields
 

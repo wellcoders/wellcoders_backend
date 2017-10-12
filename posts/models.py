@@ -26,8 +26,12 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     publish_date = models.DateTimeField()
     title = models.CharField(max_length=155)
+    title_slug = models.CharField(max_length=155, null=True, blank=True)
     content = models.TextField()
     summary = models.CharField(max_length=155)
     category = models.ForeignKey(Category)
     media = models.TextField(null=True, blank=True)  # Use with an url until media model is included
     status = models.CharField(max_length=3, choices=STATUS, default=DRAFT)
+
+    class Meta:
+        unique_together = ('title', 'owner',)
