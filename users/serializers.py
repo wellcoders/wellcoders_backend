@@ -24,6 +24,16 @@ class UserSerializer(ModelSerializer):
 
         return user
 
+    def update(self, instance, validated_data):
+        user = super().update(instance, validated_data)
+
+        if(validated_data.get('password')):
+            user.set_password(validated_data.get('password'))
+
+        user.save()
+
+        return user
+
 
 def login_handler(token, user=None, request=None):
     serialized_user = UserSerializer(user, context={'request': request}).data

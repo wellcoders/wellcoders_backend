@@ -151,3 +151,14 @@ JWT_AUTH = {
 }
 
 UPLOADS_DIR = os.path.join('./static', 'uploads')
+
+# only lowercase
+TITLE_SLUG_REPLACEMENTS = [
+    ['á', 'a'],
+    ['é', 'e'],
+    ['í', 'i'],
+    ['ó', 'o'],
+    ['ú', 'u'],
+    ['€', 'euros'],
+    ['ñ', 'n']
+]
