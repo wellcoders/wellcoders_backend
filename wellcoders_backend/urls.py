@@ -17,24 +17,25 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
-from posts.api import PostsAPI, UserPostList
-from users.api import Register, PasswordResetView
-from django.views.generic import TemplateView
+from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList
+from users.api import Register, UserAPI, Recovery
+from media.api import MediaUploadViewSet
 
 router = routers.DefaultRouter()
 router.register("posts", PostsAPI, base_name="posts_api")
+router.register("users", UserAPI, base_name="user_api")
+router.register("media", MediaUploadViewSet, base_name="media_api")
 
 urlpatterns = [
-    url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^api/1.0/', include(router.urls)),
     url(r'^api/1.0/login/', obtain_jwt_token),
     url(r'^api/1.0/register/', Register.as_view(), name='register'),
-    url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/posts/$', UserPostList.as_view(), name='userpost-list'),
-    url(r'^api/1.0/password/reset/$', PasswordResetView.as_view(), name='rest_password_reset'),
-    # this url is used to generate email content
-    url(r'^password-reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        TemplateView.as_view(template_name="password_reset_confirm.html"),
-        name='password_reset_confirm'),
-    #url(r'^api/1.0/password/change/$', UpdatePassword.as_view(), name='rest_password_change'),
+    url(r'^api/1.0/recovery/', Recovery.as_view(), name='recovery'),
+    url(r'^api/1.0/categories/', CategoryList.as_view(), name='category'),
+    url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/$', UserPostList.as_view(), name='userpost-list'),
+    url(r'^api/1.0/tag/(?P<category>[0-9a-zA-Z_-]+)/$', CategoryPostList.as_view(), name='categorypost-list')
 ]
+
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+urlpatterns += staticfiles_urlpatterns()

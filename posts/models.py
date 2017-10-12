@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
+import re
 
 
 class Category(models.Model):
@@ -14,19 +16,33 @@ class Category(models.Model):
 class Post(models.Model):
     DRAFT = 'DRF'
     PUBLISHED = 'PUB'
+    DELETED = 'DEL'
 
     STATUS = (
         (DRAFT, 'Draft'),
-        (PUBLISHED, 'Published')
+        (PUBLISHED, 'Published'),
+        (DELETED, 'Deleted')
     )
 
     owner = models.ForeignKey(User)
     created_at = models.DateTimeField(auto_now=True)
     publish_date = models.DateTimeField()
     title = models.CharField(max_length=155)
+    title_slug = models.CharField(max_length=155, null=True, blank=True)
     content = models.TextField()
     summary = models.CharField(max_length=155)
     category = models.ForeignKey(Category)
     media = models.TextField(null=True, blank=True)  # Use with an url until media model is included
     status = models.CharField(max_length=3, choices=STATUS, default=DRAFT)
 
+    class Meta:
+        unique_together = ('title', 'owner',)
+
+    @staticmethod
+    def generate_title_slug(source):
+        source = source.lower()
+
+        for string, replacement in settings.TITLE_SLUG_REPLACEMENTS:
+            source = source.replace(string, replacement)
+            
+        return "-".join(re.findall("[a-zA-Z0-9]+", source))

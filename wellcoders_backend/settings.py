@@ -37,11 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
-    'posts',
+    'museum',
+    'posts'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -143,5 +146,23 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.serializers.login_handler'
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.serializers.login_handler',
+    'JWT_VERIFY_EXPIRATION': False
 }
+
+UPLOADS_DIR = os.path.join('./static', 'uploads')
+
+# only lowercase
+TITLE_SLUG_REPLACEMENTS = [
+    ['á', 'a'],
+    ['é', 'e'],
+    ['í', 'i'],
+    ['ó', 'o'],
+    ['ú', 'u'],
+    ['€', 'euros'],
+    ['ñ', 'n']
+]
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+WELLCODERS_RECOVERY_EMAIL = 'recovery@wellcoders.com'
