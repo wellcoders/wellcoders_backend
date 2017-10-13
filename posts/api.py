@@ -40,34 +40,15 @@ class PostsAPI(ModelViewSet):
     def perform_create(self, serializer):
         request = self.request
         category = None
-        title_slug = request.data.get('title_slug')
-
         try:
             category = Category.objects.get(pk=request.data.get('category_id'))
         except:
             pass
 
-        if not title_slug:
-            title_slug = Post.generate_title_slug(request.data.get('title'))
-        else:
-            title_slug = Post.generate_title_slug(request.data.get('title_slug'))
+        serializer.save(owner=request.user,
+                        category=category,
+                        content=clean_html(request.data.get('content')))
 
-        serializer.save(owner=request.user, 
-                        category=category, 
-                        content=clean_html(request.data.get('content')),
-                        title_slug=title_slug)
-
-    def perform_update(self, serializer):
-        request = self.request
-        title_slug = request.data.get('title_slug')
-
-        if not title_slug:
-            title_slug = Post.generate_title_slug(request.data.get('title'))
-        else:
-            title_slug = Post.generate_title_slug(request.data.get('title_slug'))
-
-        print(title_slug)        
-        serializer.save(title_slug=title_slug)
 
 class UserPostList(ListAPIView):
 
@@ -77,8 +58,9 @@ class UserPostList(ListAPIView):
     def get_queryset(self):
         try:
             username = self.kwargs.get('username', '')
+            status = self.request.GET.get('status', '')
             user = User.objects.get(username=username)
-            return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=Post.PUBLISHED,
+            return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=status,
                                                         owner=user.pk).all().order_by('-publish_date')
         except User.DoesNotExist:
             raise Http404
