@@ -1,17 +1,32 @@
 # -*- coding: utf-8 -*-
 from django.http import Http404
 from rest_framework.generics import ListAPIView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.mixins import ListModelMixin
-from posts.models import Post, Category
-from posts.serializers import PostSerializer, Pagination, CategorySerializer
+from posts.models import Post, Category, Comment
+from posts.permissions import CommentPermission
+from posts.serializers import PostSerializer, CommentSerializer, Pagination, CategorySerializer
 from django.utils import timezone
-from rest_framework.filters import SearchFilter, OrderingFilter, DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django.contrib.auth.models import User
 from lxml.html.clean import clean_html
-from posts.models import Post
+
+
+class CommentsAPI(ModelViewSet):
+    serializer_class = CommentSerializer
+    pagination_class = Pagination
+    queryset = Comment.objects.select_related().all()
+
+    ordering = ('-created_at')
+
+    permission_classes = (CommentPermission,)
+
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+#        serializer.get_fields().get("owner").instance = UserSerializer(self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 
 class PostsAPI(ModelViewSet):

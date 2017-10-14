@@ -46,3 +46,16 @@ class Post(models.Model):
             source = source.replace(string, replacement)
             
         return "-".join(re.findall("[a-zA-Z0-9]+", source))
+
+
+class Comment(models.Model):
+    owner = models.ForeignKey(User)
+    content = models.TextField()
+    post = models.ForeignKey(Post)
+
+    created_at = models.DateTimeField(auto_now_add=True)  # automáticamente añada la fecha de creación
+    modified_at = models.DateTimeField(auto_now=True)  # automáticamente actualiza la fecha al guardar
+
+    def __str__(self):
+        return "%s - %s" % (self.owner.username, self.post.title)
+

@@ -17,13 +17,14 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
-from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList
+from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList, CommentsAPI
 from users.api import Register, UserAPI, Recovery
 from media.api import MediaUploadViewSet
 
 router = routers.DefaultRouter()
 router.register("posts", PostsAPI, base_name="posts_api")
 router.register("users", UserAPI, base_name="user_api")
+router.register("comments", CommentsAPI, base_name="comments_api")
 router.register("media", MediaUploadViewSet, base_name="media_api")
 
 urlpatterns = [
