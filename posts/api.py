@@ -73,7 +73,7 @@ class UserPostList(ListAPIView):
     def get_queryset(self):
         try:
             username = self.kwargs.get('username', '')
-            status = self.request.GET.get('status', '')
+            status = self.request.GET.get('status', 'PUB')
             user = User.objects.get(username=username)
             return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=status,
                                                         owner=user.pk).all().order_by('-publish_date')

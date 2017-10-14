@@ -21,10 +21,14 @@ class CategorySerializer(ModelSerializer):
 class PostSerializer(ModelSerializer):
     owner = UserSerializer()
     category = CategorySerializer()
+    num_comments = serializers.SerializerMethodField('_num_comments')
 
     class Meta:
         model = Post
-        fields = ['pk', 'media', 'owner', 'publish_date', 'title', 'title_slug', 'summary', 'content', 'category', 'status']
+        fields = ['pk', 'media', 'owner', 'publish_date', 'title', 'title_slug', 'summary', 'content', 'category', 'status', 'num_comments']
+
+    def _num_comments(self, obj):
+        return Comment.objects.filter(post_id=obj).count()
 
     def get_fields(self):
         fields = super().get_fields()
@@ -36,6 +40,7 @@ class PostSerializer(ModelSerializer):
                 if self.context['view'].action in ('create', 'update'):
                     fields.pop('owner')
                     fields.pop('category')
+                    fields.pop('num_comments')
                 elif self.context['view'].action in ('list'):
                     fields.pop('status')
             except:
