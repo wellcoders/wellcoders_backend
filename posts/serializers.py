@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-from posts.models import Post, Category
-from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from rest_framework import generics
+from rest_framework.relations import PrimaryKeyRelatedField
+
+from posts.models import Post, Category
 from users.serializers import UserSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django.conf import settings
 from rest_framework.serializers import ModelSerializer
-from posts.models import Post
+from posts.models import Post, Comment
 
 
 class CategorySerializer(ModelSerializer):
@@ -45,6 +45,40 @@ class PostSerializer(ModelSerializer):
         return fields
 
 
+class CommentSerializer(ModelSerializer):
+    post = PrimaryKeyRelatedField(queryset=Post.objects.all())
+    owner = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ["pk", "post", "owner", "content", "created_at"]
+        write_only_fields = ["modified_at"]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        view = self.context.get("view")
+        if view.action not in {"list", "retrieve"}:
+            owner = fields.get("owner")
+            owner.required = False
+
+        return fields
+
+    def validate_post(self, value):
+        """
+            Comment can not be assigned to another pos
+        """
+
+        if self.context.get("view").action in {"update", "partial_update"}:
+            source_post_in_path = int(self.context.get("request").path.split("/")[-2])
+            source_post_in_params = Comment.objects.filter(post__pk=value.pk).filter(pk=source_post_in_path)
+            if source_post_in_params.count() == 0:
+                raise serializers.ValidationError("Informed post does not belong to the user")
+
+        return value
+
+#
+
+
 class Pagination(PageNumberPagination):
 
     def get_paginated_response(self, data):
@@ -59,3 +93,4 @@ class Pagination(PageNumberPagination):
             'count': self.page.paginator.count,
             'results': data
         })
+
