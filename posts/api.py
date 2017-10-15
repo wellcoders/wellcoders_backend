@@ -17,12 +17,16 @@ from rest_framework.response import Response
 class CommentsAPI(ModelViewSet):
     serializer_class = CommentSerializer
     pagination_class = Pagination
-    queryset = Comment.objects.select_related().all()
-
-    ordering = ('-created_at')
 
     permission_classes = (CommentPermission,)
 
+    def get_queryset(self):
+        if 'post' in self.request.query_params:
+            queryset = Comment.objects.filter(post__pk=self.request.query_params.get('post')).select_related().order_by('-created_at')
+        else:
+            queryset = Comment.objects.select_related().all()
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
