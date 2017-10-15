@@ -36,10 +36,12 @@ class CommentsAPI(ModelViewSet):
 class PostsAPI(ModelViewSet):
     serializer_class = PostSerializer
     pagination_class = Pagination
+    queryset = Post.objects.all()
 
     def get_queryset(self):
         if 'username' in self.request.query_params and 'title_slug' in self.request.query_params:
             user = User.objects.get(username=self.request.query_params.get('username'))
+
             if self.request.user.is_superuser or self.request.user == user:
                 queryset = Post.objects.select_related().filter(owner=user, title_slug=self.request.query_params.
                                                                 get('title_slug'))
@@ -47,13 +49,19 @@ class PostsAPI(ModelViewSet):
                 queryset = Post.objects.select_related().filter(owner=user, title_slug=self.request.query_params
                                                                 .get('title_slug'), publish_date__lte=timezone.now(),
                                                                 status=Post.PUBLISHED)
+            
+            if not queryset:
+                raise Http404
         else:
-            queryset = Post.objects.select_related().filter(publish_date__lte=timezone.now(),
-                                                            status=Post.PUBLISHED).all().order_by('-publish_date')
-        if queryset:
-            return queryset
-        else:
-            raise Http404
+            if 'pk' in self.kwargs:
+                queryset = Post.objects.filter(pk=self.kwargs['pk'])
+                
+                if len(queryset) == 1 and queryset[0].owner == self.request.user:
+                    return queryset
+            else:
+                queryset = Post.objects.select_related().filter(publish_date__lte=timezone.now(),
+                                                        status=Post.PUBLISHED).all().order_by('-publish_date')
+        return queryset
 
     def perform_create(self, serializer):
         request = self.request
@@ -62,10 +70,33 @@ class PostsAPI(ModelViewSet):
             category = Category.objects.get(pk=request.data.get('category_id'))
         except:
             pass
+        if not title_slug:
+            title_slug = Post.generate_title_slug(request.data.get('title'))
+        else:
+            title_slug = Post.generate_title_slug(request.data.get('title_slug'))
 
-        serializer.save(owner=request.user,
-                        category=category,
-                        content=clean_html(request.data.get('content')))
+        serializer.save(owner=request.user, 
+                        category=category, 
+                        content=clean_html(request.data.get('content')),
+                        title_slug=title_slug)
+
+    def perform_update(self, serializer):
+        request = self.request
+        title_slug = request.data.get('title_slug')
+
+        try:
+            category = Category.objects.get(pk=request.data.get('category_id'))
+        except:
+            pass
+        if not title_slug:
+            title_slug = Post.generate_title_slug(request.data.get('title'))
+        else:
+            title_slug = Post.generate_title_slug(request.data.get('title_slug'))
+
+        serializer.save(owner=request.user, 
+                        category=category, 
+                        content=clean_html(request.data.get('content')),
+                        title_slug=title_slug)
 
 
 class UserPostList(ListAPIView):
@@ -78,8 +109,18 @@ class UserPostList(ListAPIView):
             username = self.kwargs.get('username', '')
             status = self.request.GET.get('status', '')
             user = User.objects.get(username=username)
-            return Post.objects.select_related().filter(publish_date__lte=timezone.now(), status=status,
-                                                        owner=user.pk).all().order_by('-publish_date')
+
+            print(user.username)
+            print(self.request.user.username)
+
+            queryset = Post.objects.select_related().filter(status=status,
+                                                            owner=user).all().order_by('-publish_date')
+
+            if user == self.request.user:
+                return queryset
+            else:    
+                return queryset.filter(publish_date__lte=timezone.now())
+            
         except User.DoesNotExist:
             raise Http404
 

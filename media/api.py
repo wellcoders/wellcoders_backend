@@ -33,9 +33,6 @@ class MediaUploadViewSet(viewsets.GenericViewSet,
             return Response({'error': _(u'File content type {0} not allowed'.format(file_obj.content_type)),
                              'file': file_obj.name}, status=400)
 
-        #file_path = os.path.join(settings.BASE_DIR, 'temp', file_obj.name)
-
-
         hash = hashlib.md5(file_obj.read()).hexdigest()
         file_obj.seek(0)
 
@@ -43,8 +40,6 @@ class MediaUploadViewSet(viewsets.GenericViewSet,
             response = 200
             picture = Picture.objects.get(pk=hash)
         else:
-        #hash = hashlib.md5(file_obj.open().read()).hexdigest()
-        #gallery_tasks.museum_create_picture_by_image.delay(file_path, request.user.pk)
             response = 201
             picture = Picture()
             picture.owner = request.user
@@ -56,7 +51,6 @@ class MediaUploadViewSet(viewsets.GenericViewSet,
 
 
     def retrieve(self, request, pk=None):
-        print(pk)
         if Picture.objects.filter(pk=pk).exists():
             picture = Picture.objects.get(pk=pk)
             filename, file_extension = os.path.splitext(os.path.basename(picture.name))
