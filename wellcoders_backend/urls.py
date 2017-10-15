@@ -17,7 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework_jwt.views import obtain_jwt_token
-from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList, CommentsAPI
+from posts.api import PostsAPI, UserPostList, CategoryList, CategoryPostList, CommentsAPI, FavoritePostAPI, FavoritePostList
 from users.api import Register, UserAPI, Recovery
 from media.api import MediaUploadViewSet
 
@@ -34,8 +34,11 @@ urlpatterns = [
     url(r'^api/1.0/register/', Register.as_view(), name='register'),
     url(r'^api/1.0/recovery/', Recovery.as_view(), name='recovery'),
     url(r'^api/1.0/categories/', CategoryList.as_view(), name='category'),
+    url(r'^api/1.0/tag/(?P<category>[0-9a-zA-Z_-]+)/$', CategoryPostList.as_view(), name='categorypost-list'),
+    url(r'^api/1.0/posts/(?P<post_id>[0-9]+)/favorite/$', FavoritePostAPI.as_view(), name='favorite'),
+    url(r'^api/1.0/favorites/$', FavoritePostList.as_view(), name='favorite-list'), 
     url(r'^api/1.0/(?P<username>[0-9a-zA-Z_-]+)/$', UserPostList.as_view(), name='userpost-list'),
-    url(r'^api/1.0/tag/(?P<category>[0-9a-zA-Z_-]+)/$', CategoryPostList.as_view(), name='categorypost-list')
+   
 ]
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns

@@ -59,3 +59,10 @@ class Comment(models.Model):
     def __str__(self):
         return "%s - %s" % (self.owner.username, self.post.title)
 
+
+class FavoritePost(models.Model):
+    user = models.ForeignKey(User)
+    post = models.ForeignKey(Post)
+
+    class Meta:
+        unique_together = ('user', 'post')

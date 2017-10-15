@@ -2,7 +2,7 @@
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
-from posts.models import Post, Category
+from posts.models import Post, Category, FavoritePost
 from users.serializers import UserSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -22,13 +22,19 @@ class PostSerializer(ModelSerializer):
     owner = UserSerializer()
     category = CategorySerializer()
     num_comments = serializers.SerializerMethodField('_num_comments')
+    is_favorite = serializers.SerializerMethodField('_is_favorite')
 
     class Meta:
         model = Post
-        fields = ['pk', 'media', 'owner', 'publish_date', 'title', 'title_slug', 'summary', 'content', 'category', 'status', 'num_comments']
+        fields = ['pk', 'media', 'owner', 'publish_date', 'title', 'title_slug', 'summary', 'content', 'category', 'status', 'num_comments', 'is_favorite']
 
     def _num_comments(self, obj):
         return Comment.objects.filter(post_id=obj).count()
+
+    def _is_favorite(self, obj):
+        if self.context['request'].user.is_authenticated():
+            return FavoritePost.objects.filter(post=obj, user=self.context['request'].user).exists()
+        return False
 
     def get_fields(self):
         fields = super().get_fields()
@@ -41,8 +47,10 @@ class PostSerializer(ModelSerializer):
                     fields.pop('owner')
                     fields.pop('category')
                     fields.pop('num_comments')
+                    fields.pop('is_favorite')
                 elif self.context['view'].action in ('list'):
                     fields.pop('status')
+
             except:
                 # Pasará por aquí si el serializer no forma parte de un ModelViewSet, pero es necesario hacer pop de owner y category en la creación de posts
                 pass
@@ -80,8 +88,6 @@ class CommentSerializer(ModelSerializer):
                 raise serializers.ValidationError("Informed post does not belong to the user")
 
         return value
-
-#
 
 
 class Pagination(PageNumberPagination):

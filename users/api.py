@@ -43,7 +43,6 @@ class Register(APIView):
             serializer.save()
 
             data_to_return = serializer.data
-#            data_to_return.pop('password')
 
             return Response(data_to_return, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
