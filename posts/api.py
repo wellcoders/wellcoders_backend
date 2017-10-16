@@ -12,6 +12,8 @@ from django.contrib.auth.models import User
 from lxml.html.clean import clean_html
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
+
 
 
 class CommentsAPI(ModelViewSet):
@@ -40,6 +42,8 @@ class CommentsAPI(ModelViewSet):
 class PostsAPI(ModelViewSet):
     serializer_class = PostSerializer
     pagination_class = Pagination
+    filter_backends = (SearchFilter, )
+    search_fields = ("title", "content", "summary")
     queryset = Post.objects.all()
 
     def get_queryset(self):
@@ -55,6 +59,7 @@ class PostsAPI(ModelViewSet):
                                                                 status=Post.PUBLISHED)
             
             if not queryset:
+
                 raise Http404
         else:
             if 'pk' in self.kwargs:
@@ -99,6 +104,8 @@ class UserPostList(ListAPIView):
 
     serializer_class = PostSerializer
     pagination_class = Pagination
+    filter_backends = (SearchFilter,)
+    search_fields = ("title", "content", "summary")
 
     def get_queryset(self):
         try:
@@ -125,6 +132,8 @@ class CategoryPostList(ListAPIView):
     model = Post
     serializer_class = PostSerializer
     pagination_class = Pagination
+    filter_backends = (SearchFilter,)
+    search_fields = ("title", "content", "summary")
 
     def get_queryset(self):
         category_name = self.kwargs.get('category', '')
@@ -137,6 +146,8 @@ class FavoritePostList(ListAPIView):
     model = Post
     serializer_class = PostSerializer
     pagination_class = Pagination
+    filter_backends = (SearchFilter,)
+    search_fields = ("title", "content", "summary")
 
     def get_queryset(self):
         favorite_posts = FavoritePost.objects.filter(user=self.request.user)
