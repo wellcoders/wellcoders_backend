@@ -74,10 +74,8 @@ class PostsAPI(ModelViewSet):
             category = Category.objects.get(pk=request.data.get('category_id'))
         except:
             pass
-        if not title_slug:
-            title_slug = Post.generate_title_slug(request.data.get('title'))
-        else:
-            title_slug = Post.generate_title_slug(request.data.get('title_slug'))
+
+        title_slug = Post.generate_title_slug(request.data.get('title'))
 
         serializer.save(owner=request.user, 
                         category=category, 
@@ -86,21 +84,15 @@ class PostsAPI(ModelViewSet):
 
     def perform_update(self, serializer):
         request = self.request
-        title_slug = request.data.get('title_slug')
 
         try:
             category = Category.objects.get(pk=request.data.get('category_id'))
         except:
             pass
-        if not title_slug:
-            title_slug = Post.generate_title_slug(request.data.get('title'))
-        else:
-            title_slug = Post.generate_title_slug(request.data.get('title_slug'))
 
         serializer.save(owner=request.user, 
                         category=category, 
-                        content=clean_html(request.data.get('content')),
-                        title_slug=title_slug)
+                        content=clean_html(request.data.get('content')))
 
 
 class UserPostList(ListAPIView):
