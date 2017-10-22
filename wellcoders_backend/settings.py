@@ -166,3 +166,6 @@ TITLE_SLUG_REPLACEMENTS = [
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 WELLCODERS_RECOVERY_EMAIL = 'recovery@wellcoders.com'
+WELLCODERS_USER_REGISTERED_EMAIL = 'welcome@wellcoders.com'
+WELLCODERS_PUBLIC_URL = 'http://localhost:4200'
+MENTION_REGEX = '(@[a-zA-ZñÑ0-9]+)'

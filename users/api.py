@@ -44,6 +44,14 @@ class Register(APIView):
 
             data_to_return = serializer.data
 
+            send_mail(
+                emails.USER_REGISTERED_SUBJECT % {'user': request.data.get('username') },
+                emails.USER_REGISTERED_BODY % {'user': request.data.get('username') },
+                settings.WELLCODERS_USER_REGISTERED_EMAIL,
+                [request.data.get('email')],
+                fail_silently=False,
+            )
+
             return Response(data_to_return, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

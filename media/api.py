@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from media.serializers import PictureSerializer
 from django.core.files import File
 import hashlib
+import imghdr
 
 
 class MediaUploadViewSet(viewsets.GenericViewSet,
@@ -45,14 +46,19 @@ class MediaUploadViewSet(viewsets.GenericViewSet,
             picture.owner = request.user
             picture.original_file = file_obj
             picture.save()
-
-        filename, file_extension = os.path.splitext(os.path.basename(picture.name))
-        return Response({'id': picture.pk, 'name': filename, 'extension': file_extension}, status=response)
+            try:
+                picture.resize_image()
+            except:
+                picture.delete()
+                return Response({'error': 'The uploaded file is not an image'}, status=404)
+            
+        filename, file_extension = os.path.splitext(os.path.basename(picture.original_file.path))
+        return Response(PictureSerializer(picture).data, status=response)
 
 
     def retrieve(self, request, pk=None):
         if Picture.objects.filter(pk=pk).exists():
             picture = Picture.objects.get(pk=pk)
-            filename, file_extension = os.path.splitext(os.path.basename(picture.name))
+            filename, file_extension = os.path.splitext(os.path.basename(picture.original_file.path))
             return Response({'id': picture.pk, 'name': filename, 'extension': file_extension}, status=200)
         return Response({'not_found': pk}, status=404)

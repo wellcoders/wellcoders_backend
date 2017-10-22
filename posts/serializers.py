@@ -48,9 +48,6 @@ class PostSerializer(ModelSerializer):
                     fields.pop('category')
                     fields.pop('num_comments')
                     fields.pop('is_favorite')
-                elif self.context['view'].action in ('list'):
-                    fields.pop('status')
-
             except:
                 # Pasará por aquí si el serializer no forma parte de un ModelViewSet, pero es necesario hacer pop de owner y category en la creación de posts
                 pass

@@ -1,2 +1,8 @@
 PASSWORD_RECOVERY_SUBJECT = 'Wellcoders: Password Recovery Email'
 PASSWORD_RECOVERY_BODY = 'Wellcome %(user)s. We have received a request to recovery your password. Your new password is %(password)s. Remember to change it after login. Have a nice day!'
+USER_REGISTERED_SUBJECT = 'Wellcoders: Welcome to our platform %(user)s'
+USER_REGISTERED_BODY = 'Wellcome %(user)s. Thanks for register in our platform!'
+USER_MENTIONED_IN_POST_SUBJECT = 'Wellcoders: Someone mention you in an article'
+USER_MENTIONED_IN_POST_BODY = 'Wellcome %(user)s. %(other_user)s mentioned you in their article. Check it in %(url)s.'
+USER_MENTIONED_IN_COMMENT_SUBJECT = 'Wellcoders: Someone mention you in a comment'
+USER_MENTIONED_IN_COMMENT_BODY = 'Wellcome %(user)s. %(other_user)s mentioned you in their comment. Check it in %(url)s.'
