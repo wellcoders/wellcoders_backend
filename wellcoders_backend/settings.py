@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'museum',
     'posts'
 ]
 
@@ -146,5 +148,26 @@ REST_FRAMEWORK = {
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.serializers.login_handler',
-    'JWT_VERIFY_EXPIRATION': False
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(minutes=30),
 }
+
+UPLOADS_DIR = os.path.join('./static', 'uploads')
+
+# only lowercase
+TITLE_SLUG_REPLACEMENTS = [
+    ['á', 'a'],
+    ['é', 'e'],
+    ['í', 'i'],
+    ['ó', 'o'],
+    ['ú', 'u'],
+    ['€', 'euros'],
+    ['ñ', 'n']
+]
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+WELLCODERS_RECOVERY_EMAIL = 'recovery@wellcoders.com'
+WELLCODERS_USER_REGISTERED_EMAIL = 'welcome@wellcoders.com'
+WELLCODERS_PUBLIC_URL = 'http://localhost:4200'
+MENTION_REGEX = '(@[a-zA-ZñÑ0-9]+)'

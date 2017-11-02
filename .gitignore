@@ -4,3 +4,4 @@ static/*
 db.sqlite3
 /.project
 **/__pycache__/*
+museum/*
